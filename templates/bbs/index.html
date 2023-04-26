@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>img{ max-width:100%; }</style>
     <title>掲示板</title>
 </head>
 <body>
@@ -35,7 +36,8 @@
                 </div>
                 <div class="form-group">
                     <label for="comment">コメント：</label>
-                    <textarea class="form-control" name="comment"></textarea>
+                    <!-- <textarea class="form-control" name="comment"></textarea> -->
+                    {{ form.comment }}
                 </div>
                 <button class="btn btn-primary" type="submit">送信</button>
             </form>
@@ -46,8 +48,14 @@
                 <div class="card mb-1">
                     <div class="card-header">{{ topic.category.name }}</div>
                     <div class="card-body">
-                        <p class="card-text">{{ topic.comment }}     【投稿者】{{ topic.name }}【投稿日時】{{ topic.created_at }}</p>
+                        <p class="card-text">{{ topic.comment|safe }}     【投稿者】{{ topic.name }}【投稿日時】{{ topic.created_at }}</p>
                         コメント数（{{ topic.reply_amount }}）<a class="btn btn-primary" href="{% url 'bbs:reply' topic.id %}">返信</a>
+                        <form action="{% url 'bbs:topic_delete' topic.id %}" method="post" style="display:inline-block;" onsubmit="if(confirm('本当に削除しますか？')){ return true } else { return false };">
+                            {% csrf_token %}
+                            <input class="btn btn-danger" type="submit" value="削除">
+                        </form>
+
+                        <a class="btn btn-success" href="{% url 'bbs:topic_edit' topic.id %}">編集</a>
                     </div>
                 </div>
                 {% endfor %}

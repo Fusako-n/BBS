@@ -6,11 +6,14 @@ class Category(models.Model):
     
     def __str__(self):
         return self.name
+    
+    class Meta:
+        verbose_name_plural = 'Categories'
 
 
 class Topic(models.Model):
     category = models.ForeignKey(Category, verbose_name='カテゴリ', on_delete=models.CASCADE, null=True, blank=True)
-    comment = models.CharField(verbose_name='コメント', max_length=200)
+    comment = models.TextField(verbose_name='コメント')
     name = models.CharField(verbose_name="名前", max_length=20, default="匿名")
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -27,3 +30,18 @@ class Reply(models.Model):
     
     def __str__(self):
         return self.comment
+    
+    class Meta:
+        verbose_name_plural = 'Replies'
+
+
+class Contacts(models.Model):
+    name = models.CharField(verbose_name='お名前', max_length=20)
+    email = models.EmailField(verbose_name='メールアドレス', max_length=50)
+    content = models.TextField(verbose_name='お問い合わせ内容')
+    
+    def __str__(self):
+        return self.name
+    
+    class Meta:
+        verbose_name_plural = 'Contacts'
