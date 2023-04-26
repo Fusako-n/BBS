@@ -12,7 +12,7 @@
         <div class="title">
             <h2>お問い合わせフォーム</h2>
         </div>
-        <form method="POST" action="">
+        <form method="POST" action="{% url 'bbs:contacts' %}">
         {% csrf_token %}
             <div class="row">
                 {{ form.non_field_errors }}
