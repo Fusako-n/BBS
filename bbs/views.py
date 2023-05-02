@@ -1,17 +1,37 @@
 from django.shortcuts import render, redirect
-from django.views import generic, View
+from django.views import View
 from django.contrib import messages
-# from django.urls import reverse_lazy
+from django.db.models import Q
 
 from .models import Topic, Category, Reply
-from .forms import TopicForm, ContactsForm, ReplyForm
+from .forms import TopicForm, TopicCategoryForm, ContactsForm, ReplyForm
 
 
 class IndexView(View):
     def get(self, request, *args, **kwargs):
-        topics = Topic.objects.order_by('-created_at')
+        
+        query = Q()
+        # name='search'に記録されたデータを取り出す
+        if 'search' in request.GET:
+            # スペース区切りのキーワード検索に対応させる
+            words = request.GET['search'].replace(' ', '　').replace('、', '　').replace(',', '　').split('　')
+            for word in words:
+                # 空文字の場合は条件に加えない
+                if word == '':
+                    continue
+                query &= Q(comment__icontains=word)
+        
+        # カテゴリ検索：指定されたカテゴリが存在するか調べる
+        form = TopicCategoryForm(request.GET)
+        if form.is_valid():
+            cleaned = form.clean()  # fieldsで指定したフィールドを全て型変換
+            if cleaned['category']:  # if文がないとカテゴリ未指定のデータだけ出てくる
+                query &= Q(category=cleaned['category'])
+        
+        topics = Topic.objects.filter(query).order_by('-created_at')
         categories = Category.objects.all()
-        context = {'topics': topics, 'categories': categories}
+        form = TopicForm
+        context = {'topics': topics, 'categories': categories, 'form': form}
         return render(request, 'bbs/index.html', context)
     
     def post(self, request, *args, **kwargs):
@@ -81,7 +101,8 @@ class TopicEditView(View):
     def get(self, request, pk, *args, **kwargs):
         topic = Topic.objects.filter(id=pk).first()
         categories = Category.objects.all()
-        context = {'topic': topic, 'categories': categories}
+        form = TopicForm(instance=topic)
+        context = {'topic': topic, 'categories': categories, 'form': form}
         return render(request, 'bbs/topic_edit.html', context)
     
     def post(self, request, pk, *args, **kwargs):
