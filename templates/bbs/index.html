@@ -18,6 +18,17 @@
             {% endif %}
             
             <h2>掲示板</h2>
+            <form method="get">
+                <select name="category">
+                    <option value="">カテゴリ未指定</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>                
+                <input type="text" name="search" placeholder="キーワード検索" value="{{ request.GET.search }}">
+                <input type="submit" value="検索">
+            </form>
+
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group">
