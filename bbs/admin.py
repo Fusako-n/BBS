@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import Topic, Category, Contacts
 from .forms import TopicAdminForm
+from django_summernote.admin import SummernoteModelAdmin
 
 
 class TopicAdmin(admin.ModelAdmin):
