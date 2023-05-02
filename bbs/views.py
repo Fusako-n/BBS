@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib import messages
+<<<<<<< HEAD
 from django.db.models import Q
+=======
+# from django.urls import reverse_lazy
+>>>>>>> 28784dec5b3c45ea636dbdb41b3f85549728b8e8
 
 from .models import Topic, Category, Reply
 from .forms import TopicForm, TopicCategoryForm, ContactsForm, ReplyForm
@@ -101,8 +105,12 @@ class TopicEditView(View):
     def get(self, request, pk, *args, **kwargs):
         topic = Topic.objects.filter(id=pk).first()
         categories = Category.objects.all()
+<<<<<<< HEAD
         form = TopicForm(instance=topic)
         context = {'topic': topic, 'categories': categories, 'form': form}
+=======
+        context = {'topic': topic, 'categories': categories}
+>>>>>>> 28784dec5b3c45ea636dbdb41b3f85549728b8e8
         return render(request, 'bbs/topic_edit.html', context)
     
     def post(self, request, pk, *args, **kwargs):

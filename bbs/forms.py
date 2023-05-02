@@ -29,12 +29,15 @@ class TopicForm(forms.ModelForm):
             },
         }
     comment = HTMLField()
+<<<<<<< HEAD
 
 
 class TopicCategoryForm(forms.ModelForm):
     class Meta:
         model = Topic
         fields = ['category']
+=======
+>>>>>>> 28784dec5b3c45ea636dbdb41b3f85549728b8e8
 
 
 class TopicAdminForm(forms.ModelForm):
@@ -48,6 +51,12 @@ class ContactsForm(forms.ModelForm):
     class Meta:
         model = Contacts
         fields = ['name', 'email', 'content']
+<<<<<<< HEAD
+=======
+    # name = forms.CharField(max_length=20, label='お名前')
+    # email = forms.EmailField(label='メールアドレス')
+    # content = forms.CharField(label='お問い合わせ内容', widget=forms.Textarea)
+>>>>>>> 28784dec5b3c45ea636dbdb41b3f85549728b8e8
 
 
 class ReplyForm(forms.ModelForm):
