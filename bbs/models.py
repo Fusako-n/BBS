@@ -6,6 +6,14 @@ class Category(models.Model):
     
     def __str__(self):
         return self.name
+        
+    # idを文字列型に変えるモデルメソッド
+    def str_id(self):
+        return str(self.id)
+    
+    # トピック数を数えるモデルメソッド
+    def topic_amount(self):
+        return Topic.objects.filter(category=self.id).count()
     
     class Meta:
         verbose_name_plural = 'Categories'
@@ -17,6 +25,7 @@ class Topic(models.Model):
     name = models.CharField(verbose_name="名前", max_length=20, default="匿名")
     created_at = models.DateTimeField(auto_now_add=True)
     
+    # リプライ数を数えるモデルメソッド
     def reply_amount(self):
         return Reply.objects.filter(target=self.id).count()
     

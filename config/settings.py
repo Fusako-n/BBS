@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'bbs.apps.BbsConfig',
+    'bbs.templatetags.param_change',
     'django_summernote',
     'django.contrib.admin',
     'django.contrib.auth',

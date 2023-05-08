@@ -1,3 +1,5 @@
+{% load param_change %}
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -22,7 +24,7 @@
                 <select name="category">
                     <option value="">カテゴリ未指定</option>
                     {% for category in categories %}
-                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    <option value="{{ category.id }}" {% if category.str_id == request.GET.category %}selected{% endif %}>{{ category.name }}（{{ category.topic_amount }}）</option>
                     {% endfor %}
                 </select>                
                 <input type="text" name="search" placeholder="キーワード検索" value="{{ request.GET.search }}">
@@ -70,6 +72,28 @@
                     </div>
                 </div>
                 {% endfor %}
+
+                <ul class="pagination justify-content-center">
+                
+                    {% if topics.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?{% url_replace request 'page' '1' %}">最初のページ</a></li>
+                    <li class="page-item"><a class="page-link" href="?{% url_replace request 'page' topics.previous_page_number %}">前のページ</a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link">最初のページ</a></li>
+                    <li class="page-item"><a class="page-link">前のページ</a></li>
+                    {% endif %}
+
+                    <li class="page-item"><a class="page-link">{{ topics.number }}</a></li>
+                    
+                    {% if topics.has_next %}
+                    <li class="page-item"><a class="page-link" href="?{% url_replace request 'page' topics.next_page_number %}">次のページ</a></li>
+                    <li class="page-item"><a class="page-link" href="?{% url_replace request 'page' topics.paginator.num_pages %}">最後のページ</a></li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link">次のページ</a></li>
+                    <li class="page-item"><a class="page-link">最後のページ</a></li>
+                    {% endif %}
+                
+                </ul>
 
             </div>
             <a href="{% url 'bbs:contacts' %}">お問い合わせ</a>

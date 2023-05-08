@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib import messages
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 from .models import Topic, Category, Reply
 from .forms import TopicForm, TopicCategoryForm, ContactsForm, ReplyForm
@@ -24,11 +25,18 @@ class IndexView(View):
         # カテゴリ検索：指定されたカテゴリが存在するか調べる
         form = TopicCategoryForm(request.GET)
         if form.is_valid():
-            cleaned = form.clean()  # fieldsで指定したフィールドを全て型変換
+            cleaned = form.clean()  # fieldsで指定したフィールドを全て型変換{'category': Categoryのオブジェクト}
             if cleaned['category']:  # if文がないとカテゴリ未指定のデータだけ出てくる
                 query &= Q(category=cleaned['category'])
         
         topics = Topic.objects.filter(query).order_by('-created_at')
+        
+        paginator = Paginator(topics, 2)
+        if 'page' in request.GET:
+            topics = paginator.get_page(request.GET['page'])
+        else:
+            topics = paginator.get_page(1)
+        
         categories = Category.objects.all()
         form = TopicForm
         context = {'topics': topics, 'categories': categories, 'form': form}
