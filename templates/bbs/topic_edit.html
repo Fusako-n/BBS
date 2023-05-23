@@ -13,10 +13,18 @@
         <form action="{% url 'bbs:topic_edit' topic.id %}" method="POST">
             {% csrf_token %}
             <div class="form-group">
+                <label for="tag">タグ：
+                    {% for tag in tags %}
+                    <input type="checkbox" name="checkbox" value="{{ tag.id }}" {% if topic.tag.id == tag.id %}checked{% endif %}>{{ tag.name }}
+                    {% endfor %}
+                </label>
+            </div>
+            <div class="form-group">
                 <select name="category">
                     {% for category in categories %}
                     <option value="{{ category.id }}" {% if topic.category.id == category.id %}selected{% endif %}>{{ category.name }}</option>
                     {% endfor %}
+                    <!-- 上のif文のtopic.category.idは編集対象のID、category.idはレンダリングするカテゴリのID。selectedのカテゴリIDに繋がるカテゴリ名が選択されて画面に表示される。 -->
                 </select>
             </div>
             <div class="form-group">

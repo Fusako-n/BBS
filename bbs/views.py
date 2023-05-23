@@ -4,8 +4,8 @@ from django.contrib import messages
 from django.db.models import Q
 from django.core.paginator import Paginator
 
-from .models import Topic, Category, Reply
-from .forms import TopicForm, TopicCategoryForm, ContactsForm, ReplyForm
+from .models import Topic, Category, Reply, Tag
+from .forms import TopicForm, TopicCategoryForm, TopicTagForm, ContactsForm, ReplyForm
 
 
 class IndexView(View):
@@ -29,7 +29,24 @@ class IndexView(View):
             if cleaned['category']:  # if文がないとカテゴリ未指定のデータだけ出てくる
                 query &= Q(category=cleaned['category'])
         
+        # order_by()で並び替えをしないと、pagenatorでWARNINGが出る
         topics = Topic.objects.filter(query).order_by('-created_at')
+        
+        # タグ検索
+        form = TopicTagForm(request.GET)
+        if form.is_valid():
+            cleaned = form.clean()
+            # Tagのオブジェクトのリスト
+            selected_tags = cleaned['tag']
+            for tag in selected_tags:
+                # 指定したタグがトピックに含まれているかチェックし、含まれていれば追加
+                # topics = [topic for topic in topics if tag in topic.tag.all()]
+                # ↑と↓は同じこと
+                new_topics = []
+                for topic in topics:
+                    if tag in topic.tag.all():
+                        new_topics.append(topic)
+                topics = new_topics
         
         paginator = Paginator(topics, 2)
         if 'page' in request.GET:
@@ -38,8 +55,9 @@ class IndexView(View):
             topics = paginator.get_page(1)
         
         categories = Category.objects.all()
+        tags = Tag.objects.all()
         form = TopicForm
-        context = {'topics': topics, 'categories': categories, 'form': form}
+        context = {'topics': topics, 'categories': categories, 'tags': tags, 'form': form}
         return render(request, 'bbs/index.html', context)
     
     def post(self, request, *args, **kwargs):
@@ -109,8 +127,9 @@ class TopicEditView(View):
     def get(self, request, pk, *args, **kwargs):
         topic = Topic.objects.filter(id=pk).first()
         categories = Category.objects.all()
+        tags = Tag.objects.all()
         form = TopicForm(instance=topic)
-        context = {'topic': topic, 'categories': categories, 'form': form}
+        context = {'topic': topic, 'categories': categories, 'tags':tags, 'form': form}
         return render(request, 'bbs/topic_edit.html', context)
     
     def post(self, request, pk, *args, **kwargs):

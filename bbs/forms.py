@@ -18,7 +18,7 @@ class HTMLField(forms.CharField):
 class TopicForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['name', 'comment', 'category']
+        fields = ['name', 'comment', 'category', 'tag']
         error_messages = {
             'name': {
                 'max_length': 'お名前は20文字以内で入力して下さい',
@@ -37,11 +37,18 @@ class TopicCategoryForm(forms.ModelForm):
         fields = ['category']
 
 
+class TopicTagForm(forms.ModelForm):
+    class Meta:
+        model = Topic
+        fields = ['tag']
+
+
 class TopicAdminForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['name', 'comment', 'category']
-    comment = forms.CharField(widget=forms.Textarea(attrs={'maxlength':str(Topic.comment.field.max_length),}), label=Topic.comment.field.verbose_name)
+        fields = ['name', 'comment', 'category', 'tag']
+    # comment = forms.CharField(widget=forms.Textarea(attrs={'maxlength':str(Topic.comment.field.max_length),}), label=Topic.comment.field.verbose_name)
+    comment = HTMLField()  # admin画面でsummernoteを表示させる方法
 
 
 class ContactsForm(forms.ModelForm):

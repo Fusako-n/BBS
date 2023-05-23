@@ -20,17 +20,25 @@
             {% endif %}
             
             <h2>掲示板</h2>
+            
             <form method="get">
                 <select name="category">
                     <option value="">カテゴリ未指定</option>
                     {% for category in categories %}
                     <option value="{{ category.id }}" {% if category.str_id == request.GET.category %}selected{% endif %}>{{ category.name }}（{{ category.topic_amount }}）</option>
                     {% endfor %}
-                </select>                
+                </select>
+                <div>
+                    タグ: 
+                    {% for tag in tags %}
+                    <label><input type="checkbox" name="tag" value="{{ tag.id }}">{{ tag.name }}</label>
+                    {% endfor %}
+                </div>
                 <input type="text" name="search" placeholder="キーワード検索" value="{{ request.GET.search }}">
                 <input type="submit" value="検索">
             </form>
 
+            <hr>
             <form method="POST">
                 {% csrf_token %}
                 <div class="form-group">
@@ -42,6 +50,12 @@
                         {% endfor %}
 
                     </select>
+                </div>
+                <div>
+                    タグ: 
+                    {% for tag in tags %}
+                    <label><input type="checkbox" name="tag" value="{{ tag.id }}">{{ tag.name }}</label>
+                    {% endfor %}
                 </div>
                 <div class="form-group">
                     <label for="name">お名前：</label>
@@ -60,6 +74,8 @@
                 {% for topic in topics %}
                 <div class="card mb-1">
                     <div class="card-header">{{ topic.category.name }}</div>
+                    <div class="card-header">タグ: {% for tag in topic.tag.all %}{{ tag.name }} {% endfor %}</div>
+                    <!-- タグ: {{ topic.tag }}ではなく、上記のようにforループで.allメソッドを使う -->
                     <div class="card-body">
                         <p class="card-text">{{ topic.comment|safe }}     【投稿者】{{ topic.name }}【投稿日時】{{ topic.created_at }}</p>
                         コメント数（{{ topic.reply_amount }}）<a class="btn btn-primary" href="{% url 'bbs:reply' topic.id %}">返信</a>
